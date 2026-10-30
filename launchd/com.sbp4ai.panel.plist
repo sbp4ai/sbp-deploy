@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.sbp4ai.panel</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/sh</string>
+        <string>/Users/mac/codes/sbp4ai/sbp-deploy/bin/run-panel.sh</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/mac/codes/sbp4ai/sbp-agent/panel</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/mac/.sbp/logs/panel.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/mac/.sbp/logs/panel.err.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>HOME</key>
+        <string>/Users/mac</string>
+        <key>PATH</key>
+        <string>/Users/mac/glbpy14/glbpy14/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+</dict>
+</plist>
