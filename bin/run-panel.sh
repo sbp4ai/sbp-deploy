@@ -7,7 +7,7 @@ DIR=$(cd "$(dirname "$0")/.." && pwd)
 cd "$REPO_ROOT/sbp-agent/panel"
 mkdir -p "$LOG_DIR"
 exec env \
-  PYTHONPATH="$REPO_ROOT/sbp-agent/panel" \
+  PYTHONPATH="$REPO_ROOT/sbp-agent/panel:$REPO_ROOT/sbp-agent/bridge" \
   HOST="$PANEL_HOST" \
   PORT="$PANEL_PORT" \
   PYTHONUNBUFFERED=1 \

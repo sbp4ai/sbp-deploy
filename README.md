@@ -77,6 +77,52 @@ Work Buddy's menu iframe. If an embedded view ever reports a connection error,
 use the sidebar's "open in new window" button (⧉ / ↗) to launch the full
 panel in a standalone tab.
 
+### Installing the SBP4AI qwapp into QwenWork (千问办公)
+
+The qwapp is a self-contained web app that embeds your **local** agent sessions
+(Claude Code / Qwen Code / Codex / Aider / OpenCode / DSH / Qoder …) into
+QwenWork's left sidebar. It talks to the local panel over REST (ETag/304 polling)
+and recognises each CLI through the **unified adapter declarations** in
+`sbp-spec/spec/adapters/`.
+
+Prerequisite: the local panel (`com.sbp4ai.panel`, port `20016`) must be running on
+this Mac. QwenWork is a desktop app, so the qwapp can reach it at
+`http://127.0.0.1:20016`.
+
+1. **Get the package.** It is `qwapp/sbp4ai-qwapp.zip` in this repo (contains
+   `web/index.html`). Alternatively, point QwenWork straight at the same-origin URL
+   `http://127.0.0.1:20016/static/qwapp.html` and skip the upload.
+2. **Admin console → Navigation & Menus.** Go to *Users & experience →
+   Personalization → Navigation & Menus*, click **Add custom link**.
+3. Fill in:
+   - Name: `SBP4AI` (≤10 chars)
+   - Web address: leave blank when using the plugin package; otherwise
+     `http://127.0.0.1:20016/static/qwapp.html`
+   - Open: choose **open inside QwenWork (在千问办公内打开)**.
+4. **Advanced configuration → Plugin package (插件包).** Upload
+   `qwapp/sbp4ai-qwapp.zip` (must contain `web/index.html`, ≤50 MB). Set a
+   **route id (路由标识)** such as `sbp4ai` (1–32 lowercase letters/digits/dashes,
+   unique, not `knowledge-base`); the **direct link (直达链接)** is generated
+   automatically. A plain web address works too — but the plugin package takes
+   priority if both are present.
+5. **Save and publish.** Re-open QwenWork; SBP4AI shows up in the left sidebar.
+   The app lists sessions grouped by tmux with **multi-agent badges**
+   (Claude Code / Qwen Code / Codex / Aider / OpenCode / DSH / Qoder …), and for
+   Claude Code sessions a full **conversation history** (your messages + the
+   agent's reply summaries). Tap a session to open the live terminal and send
+   input / pick options.
+
+Notes:
+- The panel already sends `Access-Control-Allow-Origin: *`, so the qwapp's
+  cross-origin fetch to localhost works inside the QwenWork webview.
+- To target a different panel address, append `?api=https://host:port` to the
+  qwapp URL, or have the host inject `window.SBP_CONFIG = { api: "..." }`.
+- Adding a new CLI: drop a `*.yaml` adapter into `sbp-spec/spec/adapters/`
+  (see `claude-code.yaml`, `qwen-code.yaml`, `codex.yaml`, `aider.yaml`,
+  `opencode.yaml`, `qodercli.yaml`, `dsh.yaml`) and register its command name in
+  `sbp_supervise.py`'s `agent_adapters`. Both the panel and the supervisor pick
+  it up automatically — no code change elsewhere.
+
 ## 中文
 
 sbp4ai 技术栈在 macOS 上的**开机自启**工具。它注册三个 `launchd` 用户级任务，
@@ -148,3 +194,40 @@ panel 是**纯本机**的——它直接读这台 Mac 的 tmux 会话和
 panel **没有设置 `X-Frame-Options` / CSP**，所以能被 Work Buddy 的菜单 iframe
 干净地嵌进去。万一内嵌视图报连接错误，点侧栏里的「新窗口打开」按钮
 （⧉ / ↗）在独立标签页里开完整面板即可。
+
+### 把 SBP4AI qwapp 装进千问办公（QwenWork）左侧边栏
+
+qwapp 是一个自包含的网页应用，把你的**本机** agent 会话（Claude Code / Qwen Code /
+Codex / Aider / OpenCode / DSH / Qoder …）嵌进千问办公左侧边栏。它通过 REST
+（ETag/304 轮询）与本地 panel 通信，并借助 `sbp-spec/spec/adapters/` 里的
+**统一适配器声明**识别每一种 CLI。
+
+前提：本机 panel（`com.sbp4ai.panel`，端口 `20016`）必须在跑。千问办公是桌面应用，
+qwapp 能直连 `http://127.0.0.1:20016`。
+
+1. **拿安装包。** 在本仓 `qwapp/sbp4ai-qwapp.zip`（内含 `web/index.html`）。也可以不传
+   ZIP，直接让千问办公指向同源地址 `http://127.0.0.1:20016/static/qwapp.html`。
+2. **管理后台 → 导航与菜单。** 进入 *用户与体验 → 个性化配置 → 导航与菜单*，点
+   **添加自定义链接**。
+3. 填写：
+   - 名称：`SBP4AI`（≤10 字）
+   - 网页地址：用插件包时留空；否则填 `http://127.0.0.1:20016/static/qwapp.html`
+   - 打开方式：选 **在千问办公内打开**。
+4. **高级配置 → 插件包（插件包）。** 上传 `qwapp/sbp4ai-qwapp.zip`
+   （必须含 `web/index.html`，≤50 MB）。设一个**路由标识**（如 `sbp4ai`，
+   1–32 个小写字母/数字/连字符，唯一，不能是 `knowledge-base`）；**直达链接**会自动生成。
+   只用网页地址也行——但若同时有插件包，**插件包优先**。
+5. **保存并发布。** 重新打开千问办公，左侧栏出现 SBP4AI。应用按 tmux 分组列出会话，
+   带**多 CLI 徽章**（Claude Code / Qwen Code / Codex / Aider / OpenCode / DSH /
+   Qoder …）；对 Claude Code 会话还展示完整**对话历史**（你发的消息 + 智能体回复摘要）。
+   点开一个会话即可看到实时终端，并发送输入 / 选择选项。
+
+说明：
+- panel 已发送 `Access-Control-Allow-Origin: *`，所以 qwapp 在千问办公 webview 里
+  跨源 fetch 本机 API 是通的。
+- 想指向别的 panel 地址：在 qwapp 网址后加 `?api=https://host:port`，或由宿主注入
+  `window.SBP_CONFIG = { api: "..." }`。
+- 新增一种 CLI：往 `sbp-spec/spec/adapters/` 丢一份 `*.yaml` 适配器（参考
+  `claude-code.yaml`、`qwen-code.yaml`、`codex.yaml`、`aider.yaml`、`opencode.yaml`、
+  `qodercli.yaml`、`dsh.yaml`），并在 `sbp_supervise.py` 的 `agent_adapters` 里登记它的
+  命令名。panel 与 supervisor 都会自动识别——其它代码无需改动。
