@@ -50,6 +50,33 @@ The panel reads `.env` from its working directory; if it is missing,
   error`. The plists are still valid and **do** load at the next login; to adopt
   them into the current session, run `install.sh` from a real Terminal.
 
+### Registering SBP4AI in Work Buddy's custom menu bar
+
+The panel is **local-only** — it reads this machine's tmux sessions and
+`~/.claude/projects/*/*.jsonl` directly, so it must run on the same Mac that
+runs your agents. Two things make it appear in Work Buddy:
+
+1. **Keep the panel running.** The three `launchd` agents
+   (`com.sbp4ai.server`, `com.sbp4ai.bridge`, `com.sbp4ai.panel`) are already
+   registered and auto-start on login. If you ever need to start them by hand,
+   run `sh ./install.sh` from a real Terminal (not a sandboxed shell, which
+   hits the `Bootstrap failed: 5` error).
+2. **Add a custom-menu entry in Work Buddy.** Open the **自定义菜单栏**
+   (Custom Menu Bar) and add an item:
+   - Name: `SBP4AI`
+   - URL: `http://127.0.0.1:20016/static/sidebar.html`
+   - (optional) icon of your choice.
+
+   The sidebar is a compact tmux-session monitor: it lists sessions grouped by
+   tmux, shows live/agent tags, and expands an embedded full panel for the
+   selected session. For a full-page view instead, use
+   `http://127.0.0.1:20016/` as the menu URL.
+
+The panel sets **no `X-Frame-Options` / CSP**, so it embeds cleanly inside
+Work Buddy's menu iframe. If an embedded view ever reports a connection error,
+use the sidebar's "open in new window" button (⧉ / ↗) to launch the full
+panel in a standalone tab.
+
 ## 中文
 
 sbp4ai 技术栈在 macOS 上的**开机自启**工具。它注册三个 `launchd` 用户级任务，
@@ -98,3 +125,26 @@ panel 从自身工作目录读 `.env`；若不存在，`install.sh` 会写一个
   `launchctl bootstrap` 会报 `Bootstrap failed: 5: Input/output error`。
   plist 本身是有效的，**下次登录仍会自动加载**；要在本会话立即托管，
   请在真实终端里跑一次 `install.sh`。
+
+### 在 Work Buddy 自定义菜单栏注册 SBP4AI
+
+panel 是**纯本机**的——它直接读这台 Mac 的 tmux 会话和
+`~/.claude/projects/*/*.jsonl`，所以必须和运行智能体的同一台机器上跑。
+要让它出现在 Work Buddy 里，做两件事：
+
+1. **保证 panel 在跑。** 三个 `launchd` 任务
+   （`com.sbp4ai.server`、`com.sbp4ai.bridge`、`com.sbp4ai.panel`）已经登记，
+   登录 / 重启后自动起来。万一要手动起，请在**真实终端**里跑
+   `sh ./install.sh`（别在沙箱 shell 里跑，会撞 `Bootstrap failed: 5`）。
+2. **在 Work Buddy 里加一个自定义菜单项。** 打开 **自定义菜单栏**，新增一项：
+   - 名称：`SBP4AI`
+   - 网址：`http://127.0.0.1:20016/static/sidebar.html`
+   - （可选）自选图标。
+
+   这个侧栏是一个紧凑的 tmux 会话监控器：按 tmux 分组列出会话、标出
+   live / 智能体标签，并能在选中会话里展开内嵌的完整面板。如果想要整页视图，
+   把菜单网址换成 `http://127.0.0.1:20016/` 即可。
+
+panel **没有设置 `X-Frame-Options` / CSP**，所以能被 Work Buddy 的菜单 iframe
+干净地嵌进去。万一内嵌视图报连接错误，点侧栏里的「新窗口打开」按钮
+（⧉ / ↗）在独立标签页里开完整面板即可。
