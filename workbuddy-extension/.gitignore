@@ -1,0 +1,3 @@
+node_modules/
+*.genie
+.DS_Store

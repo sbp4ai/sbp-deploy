@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SBP4AI</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #0d1117; }
+    iframe { display: block; width: 100%; height: 100%; border: 0; }
+  </style>
+</head>
+<body>
+  <!--
+    This is the Work Buddy "发布为应用" entry shell for SBP4AI.
+    It is hosted in the cloud, but it simply embeds the LOCAL panel running on
+    the user's own machine (http://127.0.0.1:20016/static/qwapp.html), which in
+    turn drives the local tmux agent sessions (Claude Code / Qwen Code / Codex /
+    Aider / OpenCode / Qoder / dsh ...). Works on the same machine that runs the
+    SBP4AI panel. The embedded qwapp talks to the panel same-origin, so no CORS
+    config is needed here.
+  -->
+  <iframe
+    src="http://127.0.0.1:20016/static/qwapp.html"
+    title="SBP4AI"
+    allow="clipboard-read; clipboard-write"
+    referrerpolicy="no-referrer-when-downgrade"></iframe>
+</body>
+</html>

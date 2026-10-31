@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schemas.workbuddy.ai/extension-distribution.v1.json",
+  "extensionId": "sbp4ai",
+  "version": "0.1.0",
+  "kind": "user",
+  "grantedPermissions": [
+    "*"
+  ],
+  "trustedUrls": [
+    "http://127.0.0.1:20016"
+  ],
+  "processPolicy": {
+    "server": null,
+    "renderer": null
+  },
+  "status": "active",
+  "deploymentProfiles": [
+    {
+      "when": {
+        "runEnv": "prod",
+        "edition": "chinese"
+      },
+      "trustedUrls": [
+        "http://127.0.0.1:20016"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "sbp4ai-workbuddy-extension",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Work Buddy extension that embeds the SBP4AI panel (local tmux agent sessions).",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@module-federation/vite": "^1.2.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.4.10"
+  }
+}

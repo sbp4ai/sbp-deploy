@@ -1,0 +1,14 @@
+{
+  "id": "sbp4ai",
+  "name": "SBP4AI",
+  "version": "0.1.0",
+  "description": "SBP unified session panel — monitor and drive local tmux agent sessions (Claude Code / Qwen Code / Codex / Aider / OpenCode / Qoder / dsh ...) from inside Work Buddy.",
+  "ui": {
+    "entry": {
+      "title": "SBP4AI",
+      "icon": "./ui/assets/icon.svg",
+      "url": "./ui/assets/remoteEntry.js",
+      "keepAlive": true
+    }
+  }
+}

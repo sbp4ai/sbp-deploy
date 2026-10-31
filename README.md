@@ -231,3 +231,98 @@ qwapp 能直连 `http://127.0.0.1:20016`。
   `claude-code.yaml`、`qwen-code.yaml`、`codex.yaml`、`aider.yaml`、`opencode.yaml`、
   `qodercli.yaml`、`dsh.yaml`），并在 `sbp_supervise.py` 的 `agent_adapters` 里登记它的
   命令名。panel 与 supervisor 都会自动识别——其它代码无需改动。
+
+---
+
+## Work Buddy 集成（SBP4AI 自动注册）
+
+SBP4AI 在 Work Buddy 里有两种接入方式，二者已经都做好了。
+
+### A. 已发布应用（无需手点，立即可用）✅
+
+通过「发布为应用」把 SBP4AI 登记成了 Work Buddy 的一个**应用条目**，打开即出现在应用里，
+不需要在「自定义菜单栏」里手动添加。
+
+- 分享链接：`https://sbp4ai.app.workbuddy.host/?sharecode=GAOAVQZBNI`
+- 它本质是一个**全屏 iframe**，嵌入你本机正在跑的 panel
+  `http://127.0.0.1:20016/static/qwapp.html`，由 panel 驱动本机 tmux 里的各类 agent
+  （Claude Code / Qwen Code / Codex / Aider / OpenCode / Qoder / dsh …）。
+- **约束**：因为 panel 只读本机 tmux，所以这个云端壳只在**同一台机器**上打开时可用
+  （你机器上的 panel 必须处于运行态，见上面的开机自启）。
+- 源码：`sbp4ai-web/index.html`（就是那个 iframe 壳）。
+
+### B. Work Buddy 扩展包（qwapp 等价物，结构完整）
+
+Work Buddy 的内置扩展是 **Module-Federation 微前端**：每个扩展由
+`extension.json` + `distribution.json` 声明，`ui.entry.url` 指向一个 `remoteEntry.js`，
+侧边栏里「灵感社区」「云助理 2.0」等都是这么进来的。这就是 Work Buddy 里等价于
+千问办公 qwapp 的「侧边栏应用包」形态。
+
+我们已经按这个格式产出了完整的 SBP4AI 扩展包（`workbuddy-extension/`）：
+
+```
+workbuddy-extension/
+├── extension.json          # id/name/ui.entry(title+icon+remoteEntry.js)
+├── distribution.json       # kind/permissions/trustedUrls(127.0.0.1:20016)
+├── package.json            # vite + @module-federation/vite + react
+├── vite.config.mjs        # 产出 ui/assets/remoteEntry.js（暴露 ./Main）
+├── src/Main.jsx           # 嵌入本机 panel 的 qwapp
+└── ui/assets/             # 已构建的 remoteEntry.js + chunks + icon.svg
+```
+
+- 构建：`cd workbuddy-extension && npm install && npx vite build`（已构建好，可直接用）。
+- 接入方式：把整个 `workbuddy-extension/` 作为扩展目录放到 Work Buddy 的扩展加载路径
+  （参考内置扩展的 `resources/extensions/<id>/`），由它的联邦清单服务发现即可在侧边栏出现。
+
+> **现状说明**：当前 Work Buddy 的扩展由腾讯内置打包、经其联邦清单服务发现，安装包内未提供
+> 用户级「丢一个包就加载」的加载器，因此该扩展包作为**标准交付物**已就绪，能否被第三方环境
+> 直接加载取决于 Work Buddy 是否开放第三方扩展入口。功能逻辑（嵌入本机 panel）与方案 A 一致。
+
+---
+
+## Work Buddy integration (SBP4AI, programmatic registration)
+
+SBP4AI has two ways to land inside Work Buddy; both are done.
+
+### A. Published app (no manual click, live now) ✅
+
+"发布为应用" registered SBP4AI as a **Work Buddy app entry** — it shows up in the app list
+without adding anything in the custom menu.
+
+- Share link: `https://sbp4ai.app.workbuddy.host/?sharecode=GAOAVQZBNI`
+- It is a full-page iframe embedding your local panel
+  `http://127.0.0.1:20016/static/qwapp.html`, which drives the local tmux agents
+  (Claude Code / Qwen Code / Codex / Aider / OpenCode / Qoder / dsh …).
+- **Constraint**: because the panel only reads local tmux, this cloud shell only works on the
+  **same machine** that runs the panel (panel must be up — see launchd autostart above).
+- Source: `sbp4ai-web/index.html` (the iframe shell).
+
+### B. Work Buddy extension package (qwapp equivalent, format-complete)
+
+Work Buddy's built-in extensions are **Module-Federation micro-frontends**: each extension is
+declared by `extension.json` + `distribution.json`, `ui.entry.url` points at a `remoteEntry.js`,
+and that is exactly how sidebar items like "灵感社区" / "云助理 2.0" appear. This is the Work Buddy
+equivalent of Qwen Work's qwapp sidebar package.
+
+We produced a complete SBP4AI extension package in that format (`workbuddy-extension/`):
+
+```
+workbuddy-extension/
+├── extension.json          # id/name/ui.entry(title+icon+remoteEntry.js)
+├── distribution.json       # kind/permissions/trustedUrls(127.0.0.1:20016)
+├── package.json            # vite + @module-federation/vite + react
+├── vite.config.mjs        # emits ui/assets/remoteEntry.js (exposes ./Main)
+├── src/Main.jsx           # embeds the local panel qwapp
+└── ui/assets/             # built remoteEntry.js + chunks + icon.svg
+```
+
+- Build: `cd workbuddy-extension && npm install && npx vite build` (already built, ready to use).
+- To load: drop the whole `workbuddy-extension/` dir into Work Buddy's extension-load path
+  (cf. built-in `resources/extensions/<id>/`); its federation manifest service discovers it and
+  surfaces it in the sidebar.
+
+> **Status note**: currently Work Buddy's extensions are Tencent-bundled and discovered via its
+> federation manifest service; the installed app exposes no user-level "drop a package to load it"
+> loader. The extension package is therefore a **format-complete deliverable**; whether a
+> third-party environment can load it depends on Work Buddy opening a third-party extension entry.
+> Its runtime behavior (embedding the local panel) is identical to path A.
